@@ -1,0 +1,63 @@
+###
+###  VLC media player - (c) 1996-2008 the VideoLAN team
+###
+
+###
+### lines beginning with a '#' character are comments
+###
+
+[main] # main program
+
+# boolean (Enable audio)
+audio=1
+
+# boolean (Disable video)
+video=0
+
+# integer (Default audio volume)
+#volume=256
+
+# integer (Audio output volume step)
+#volume-step=32
+
+# boolean (Use a plugins cache)
+plugins-cache=0
+
+# boolean (Play files randomly forever)
+random=0
+
+# boolean (Repeat all)
+loop=0
+
+# boolean (Repeat current item)
+repeat=0
+
+# boolean (Play and exit)
+play-and-exit=0
+
+# boolean (Play and stop)
+play-and-stop=1
+
+# boolean (Use media library)
+media-library=0
+
+[rc] # Remote control interface
+# Show stream position (boolean)
+#rc-show-pos=0
+# Fake TTY (boolean)
+#rc-fake-tty=0
+# UNIX socket command input (string)
+#rc-unix=
+# TCP command input (string)
+rc-host=0.0.0.0:2222
+
+
+[logger] # File logging                          
+                                                 
+# Log filename (string)                          
+logfile=/var/vlc.log                                       
+# Log format (string)                            
+logmode=text                                           
+# RRD output file (string)                              
+#rrd-file=                                              
+

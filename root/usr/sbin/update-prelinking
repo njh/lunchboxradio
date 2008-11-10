@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Re-mount filesystem read-write
+/usr/sbin/remountrw
+
+# Prelink binaries and libaries
+/usr/sbin/prelink.bin \
+	--config-file=/etc/prelink.conf \
+	--cache-file=/var/prelink.cache \
+	-l /bin -l /usr/bin \
+	-l /sbin -l /usr/sbin \
+	-l /lib -l /usr/lib \
+	--init --verbose --force
+
+# Remount filesystem read-only again
+/usr/sbin/remountro
+

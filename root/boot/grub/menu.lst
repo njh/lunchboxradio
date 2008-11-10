@@ -1,0 +1,11 @@
+timeout 0
+default 0
+
+hiddenmenu
+serial --unit=0 --speed=19200 --word=8 --parity=no --stop=1
+terminal --dumb serial
+
+title Linux
+  root (hd0,0)
+  kernel /boot/vmlinux ro root=/dev/hda1 hdb=none console=ttyS0,19200n8
+

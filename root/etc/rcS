@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# Mount /proc and /var
+echo "> Mounting filesystems"
+/bin/mount -a
+mkdir /var/tmp
+
+# Set the hostname
+echo "> Setting up basic networking"
+/bin/hostname semradio
+/sbin/ifconfig lo up
+
+# Needed by DHCP (Raw Packet socket address family)
+modprobe af_packet
+
+# Needed by rsync (Unix socket address family)
+modprobe unix
+
+# Start telnetd for remote login/debugging
+telnetd
+
+# Create a default resolv.conf
+echo "search aelius.com" > /var/resolv.conf
+echo "nameserver 80.68.95.25" >> /var/resolv.conf
+
+export FOO='bar'
+
+echo
+echo "> Welcome to The Semantic Radio"
+echo
+

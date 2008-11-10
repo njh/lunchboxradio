@@ -1,0 +1,9 @@
+::sysinit:/etc/rcS
+::wait:/semradio/setup.rb
+::respawn:/semradio/start-dbus.sh
+::respawn:/semradio/start-vlc.sh
+::respawn:/semradio/main.rb
+::askfirst:/bin/sh
+::shutdown:/semradio/shutdown.rb
+::shutdown:/bin/umount -a -r
+::restart:/sbin/init

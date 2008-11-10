@@ -1,0 +1,7 @@
+# /etc/fstab: static file system information.
+#
+# <file system> <mount point>   <type>  <options>               <dump>  <pass>
+/dev/hda1	/		ext2	ro			0	1
+proc		/proc		proc	defaults		0	0
+sysfs		/sys		sysfs	defaults		0	0
+tmpfs           /var            tmpfs   defaults,size=10M       0       0

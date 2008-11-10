@@ -1,0 +1,9 @@
+--- 
+type: wired
+ip-method: dhcp
+ip-address: 10.63.83.50
+ip-netmask: 24
+ip-broadcast: 10.63.83.255
+ip-gateway: 10.63.83.1
+ip-domain: aelius.com
+ip-nameserver: 193.178.223.141

@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# Update the local system using rsync
+# The options should be the same as in install.pl
+#
+
+# Was the address of the rsyncd host given on command line?
+if [ $1 ]; then
+	RSYNC_IP="$1"
+else 
+	RSYNC_IP="10.63.83.16"
+fi
+
+echo "rsyncing from: $RSYNC_IP"
+
+
+# Re-mount filesystem Read-Write
+remountrw
+
+# Copy from host to local root filesystem
+rsync \
+	--verbose \
+	--recursive \
+	--links \
+	--hard-links \
+	--perms \
+	--times \
+	--exclude=.svn \
+	"rsync://$RSYNC_IP/semradio/" /
+
+# Save the data to disk
+sync
+
+# Done, re-mount Read Only
+remountro

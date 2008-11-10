@@ -1,0 +1,2 @@
+#!/bin/sh
+exec mount -o remount,rw /dev/root /
