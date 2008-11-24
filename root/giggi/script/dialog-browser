@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+$:<<File.join(File.dirname(__FILE__),'..','lib')
+
+require 'rdialog'
+require 'browser'
+
+
+class DialogBrowser < Browser
+
+  def show_dialog(data)
+    p data
+  
+    dialog = RDialog.new
+    if data['type'] == 'menu'
+      dialog.nocancel = true
+      dialog.title = data['title']
+      menu_items = data['items'].map { |h| [h['title'], ''] }
+      res = dialog.menu(data['caption'], menu_items)
+      chosen_item = data['items'].find { |h| h['title'] == res }
+      if chosen_item.nil? then nil else chosen_item['href'] end
+    elsif data['type'] == 'msgbox'
+      dialog.aspect = '40'
+      dialog.title = data['title']
+      dialog.msgbox(data['text'])
+      if data['href'].nil? then @referer else data['href'] end
+    else
+      raise "unable to show dialog type: #{data['type']}"
+    end
+  end
+
+end
+
+
+
+if __FILE__ == $0
+  HOME_URL = 'http://localhost:4000/index.dlg'
+  browser = DialogBrowser.new(HOME_URL)
+  browser.run
+end
