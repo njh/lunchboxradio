@@ -1,18 +1,20 @@
-class Pages < Application
-  provides :html, :dlg
-  
+class PagesController < ApplicationController
+
   def index
     # FIXME: would rather this was in a template
     dialog = Dialog.new(
       'type' => 'menu',
       'title' => 'Main Menu',
       'items' => [
-        {'title' => 'Live Radio', 'href' => formatted_url(:streams)},
-        {'title' => 'About This Radio', 'href' => formatted_url(:about)},
+        {'title' => 'Live Radio', 'href' => streams_url},
+        {'title' => 'About This Radio', 'href' => about_url},
         {'title' => 'Exit', 'href' => 'ruby:exit'},
       ]
     )
-    display dialog, :layout => "application"
+    respond_to do |format|
+      format.dlg { render :text => dialog.to_yaml }
+      format.html { render :text => dialog.to_html }
+    end
   end
 
   def about
@@ -22,7 +24,10 @@ class Pages < Application
       'title' => 'About This Radio',
       'text' => 'Nicholas Humfrey made this radio.'
     )
-    display dialog, :layout => "application"
+    respond_to do |format|
+      format.dlg { render :text => dialog.to_yaml }
+      format.html { render :text => dialog.to_html }
+    end
   end
 
 end

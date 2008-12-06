@@ -1,23 +1,23 @@
-class Streams < Application
-  provides :html, :dlg
-  
+class StreamsController < ApplicationController
 
   def index
-    latest_stream = RadioStream.order(:created_at).last
+    latest_stream = RadioStream.last(:order => 'created_at')
     #if latest_stream.nil? or latest_stream.created_at < 
       # Tell user that we need to fetch a list of streams
       # then redirect them to 'fetch' action
     #
     
     # Display the list of streams
-    streams = RadioStream.order(:id).all
+    streams = RadioStream.all
     dialog = Dialog.new(
       'type' => 'menu',
       'title' => 'Live Radio Streams',
       'items' => streams.map {|s| {'title' => s.title} }
     )
-
-    display dialog, :layout => "application"
+    respond_to do |format|
+      format.dlg { render :text => dialog.to_yaml }
+      format.html { render :text => dialog.to_html }
+    end
   end
   
   def fetch

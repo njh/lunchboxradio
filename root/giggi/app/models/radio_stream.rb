@@ -3,7 +3,7 @@ require 'rexml/document'
 
 XSPF_URL='http://radio.aelius.com/streams.xspf'
 
-class RadioStream < Sequel::Model
+class RadioStream < ActiveRecord::Base
 
   def self.fetch
     url = URI.parse(XSPF_URL)
