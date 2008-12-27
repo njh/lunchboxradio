@@ -31,8 +31,8 @@ task :copy_binaries do
 		  dpkg.each_line do |src_file|
 		    src_file.chomp!
 		    
-		    # Ignore files in /etc
-		    next if src_file =~ %r{^/etc}
+		    # Ignore files in /etc and /var
+		    next if src_file =~ %r{^/(etc|var)}
 		    
 		    # Ignore files in the unwanted list
 		    unwanted = false
