@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 #
 
-$:.unshift File.dirname( File.expand_path(__FILE__) )
+$:.unshift File.join(File.dirname(__FILE__),'..','lib')
 
 require 'wired-interface'
 require 'wireless-interface'
