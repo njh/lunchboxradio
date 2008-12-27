@@ -75,7 +75,7 @@ class SourcePackageTask < Rake::TaskLib
         
         if archive_path =~ /\.bz2$/
           sh 'tar', '-jx', '--strip', '1', '-f', archive_path, '-C', build_dir
-        elsif archive =~ /\.gz$/
+        elsif archive_path =~ /\.gz$/
           sh 'tar', '-zx', '--strip', '1', '-f', archive_path, '-C', build_dir
         else
           raise "Don't know how to extract archive: #{archive_path}"
