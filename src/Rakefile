@@ -1,0 +1,48 @@
+#!/usr/bin/ruby
+
+raise "Please run from root directory" unless Object.const_defined?('ROOT_DIR')
+
+
+namespace :src do
+
+  SourcePackageTask.new(:linux) do |package|
+    package.archive_url = 'http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.28.tar.bz2'
+    package.archive_md5 = 'd351e44709c9810b85e29b877f50968a'
+    task :config do
+      config_file = "#{package.build_dir}/.config"
+      unless File.exists?(config_file)
+        sh 'cp', '-f', "#{ROOT_DIR}/src/linux-kernel.config", config_file
+        sh 'make', '-C', package.build_dir, 'oldconfig'
+      end
+    end
+  end
+
+  SourcePackageTask.new(:busybox) do |package|
+    package.archive_url = 'http://busybox.net/downloads/busybox-1.13.1.tar.bz2'
+    package.archive_md5 = '17ceb0ba47415d6c22594663fa2bb9fb'
+    task :config do
+      config_file = "#{package.build_dir}/.config"
+      unless File.exists?(config_file)
+        sh 'cp', '-f', "#{ROOT_DIR}/src/busybox.config", config_file
+        sh 'make', '-C', package.build_dir, 'oldconfig'
+      end
+    end
+  end
+
+  SourcePackageTask.new(:vlc) do |package|
+    package.archive_url = 'http://download.videolan.org/pub/videolan/vlc/0.9.8a/vlc-0.9.8a.tar.bz2'
+    package.archive_md5 = '8ffa2ff763badd5de7592004d8d69a63'
+    task :config do
+      unless File.exists?("#{package.build_dir}/Makefile")
+        sh "#{ROOT_DIR}/src/vlc-config.sh", package.build_dir
+      end
+    end
+  end
+
+  desc "Clean all source build directories"
+  task :clean
+  
+  desc "Build all packages"
+  task :build
+  
+end
