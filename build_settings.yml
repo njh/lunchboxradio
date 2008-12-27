@@ -1,0 +1,6 @@
+---
+
+## Compact flash settings
+cf_device: '/dev/sdb'
+cf_partition: '/dev/sdb1'
+cf_mount: '/mnt/cf'
