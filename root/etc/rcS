@@ -5,6 +5,10 @@ echo "> Mounting filesystems"
 /bin/mount -a
 mkdir /var/tmp
 
+# Copy services directory to ramdisk
+echo "> Copying services directory to /var/services"
+cp -af /usr/service /var/service
+
 # Set the hostname
 echo "> Setting up basic networking"
 /bin/hostname giggi
@@ -16,16 +20,10 @@ modprobe af_packet
 # Needed by rsync (Unix socket address family)
 modprobe unix
 
-# Start telnetd for remote login/debugging
-telnetd
-
 # Create a default resolv.conf
 echo "search giggi.org" > /var/resolv.conf
 echo "nameserver 80.68.95.25" >> /var/resolv.conf
 
-export FOO='bar'
-
 echo
-echo "> Welcome to Giggi OS"
+echo "> Welcome to Giggi Radio OS"
 echo
-

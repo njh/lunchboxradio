@@ -1,6 +1,6 @@
 ::sysinit:/etc/rcS
-::wait:/giggi/script/setup.rb
-::respawn:/giggi/script/start-vlc.sh
+::wait:/giggi/script/startup.rb
+::respawn:/bin/runsvdir /var/service
 ::askfirst:/bin/sh
 ::shutdown:/giggi/script/shutdown.rb
 ::shutdown:/bin/umount -a -r

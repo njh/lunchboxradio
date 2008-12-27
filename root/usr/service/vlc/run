@@ -1,0 +1,15 @@
+#!/bin/sh
+
+exec 2>&1
+
+echo "Starting VideoLAN Client."
+
+# Start VLC with dummy interface and OSC enabled
+exec setuidgid vlc /usr/bin/vlc \
+  --verbose \
+  --config /etc/vlcrc \
+  --no-interact \
+  --intf dummy \
+  --control osc \
+  --osc-port 27715 \
+  --no-plugins-cache
