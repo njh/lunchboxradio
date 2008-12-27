@@ -1,8 +1,11 @@
 #!/usr/bin/ruby
 
-ROOT_DIR=File.expand_path(File.dirname(__FILE__))
 require 'rake'
 require 'yaml'
+
+# Some useful constants
+ROOT_DIR=File.expand_path(File.dirname(__FILE__))
+BUILD_ROOT=File.join(ROOT_DIR,'root')
 
 # Load settings from YAML file
 SETTINGS = YAML::load(File.read("#{ROOT_DIR}/build_settings.yml"))

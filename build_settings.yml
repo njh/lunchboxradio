@@ -4,3 +4,16 @@
 cf_device: '/dev/sdb'
 cf_partition: '/dev/sdb1'
 cf_mount: '/mnt/cf'
+
+
+# Files to remove from the build root
+unwanted_files:
+ - '^/usr/include'
+ - '^/usr/lib/gconv'
+ - '^/usr/lib/pkgconfig'
+ - '^/usr/share/doc'
+ - '^/usr/share/menu'
+ - '^/usr/share/locale'
+ - '^/usr/lib/ruby/1.8/wsdl'
+ - '^/usr/lib/ruby/1.8/soap'
+ - '\.la$'
