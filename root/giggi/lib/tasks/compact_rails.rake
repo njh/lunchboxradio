@@ -9,7 +9,6 @@ namespace :rails do
   
     def rm_rails(*path)
       full_path = File.join(RAILS_ROOT, 'vendor', 'rails', *path)
-      p full_path
       if File.exists?(full_path)
         sh 'rm', '-Rf', full_path
       end
