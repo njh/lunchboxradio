@@ -12,8 +12,15 @@ namespace :src do
       config_file = "#{package.build_dir}/.config"
       unless File.exists?(config_file)
         sh 'cp', '-f', "#{ROOT_DIR}/src/linux-kernel.config", config_file
-        sh 'make', '-C', package.build_dir, 'oldconfig'
+        package.make 'oldconfig'
       end
+    end
+    task :build do
+      package.make
+      sh 'cp', "#{package.build_dir}/arch/i386/boot/bzImage", "#{ROOT_DIR}/root/boot/vmlinux"
+      sh 'cp', "#{package.build_dir}/System.map", "#{ROOT_DIR}/root/boot/System.map"
+      sh 'cp', "#{package.build_dir}/.config", "#{ROOT_DIR}/root/boot/config"
+      package.make "INSTALL_MOD_PATH=#{ROOT_DIR}/root", 'modules_install'
     end
   end
 
@@ -24,8 +31,12 @@ namespace :src do
       config_file = "#{package.build_dir}/.config"
       unless File.exists?(config_file)
         sh 'cp', '-f', "#{ROOT_DIR}/src/busybox.config", config_file
-        sh 'make', '-C', package.build_dir, 'oldconfig'
+        package.make 'oldconfig'
       end
+    end
+    task :build do
+      package.make
+      package.make "CONFIG_PREFIX=#{ROOT_DIR}/root", 'install'
     end
   end
 
@@ -36,6 +47,10 @@ namespace :src do
       unless File.exists?("#{package.build_dir}/Makefile")
         sh "#{ROOT_DIR}/src/vlc-config.sh", package.build_dir
       end
+    end
+    task :build do
+      package.make
+      package.make "DESTDIR=#{ROOT_DIR}/root", 'install'
     end
   end
 

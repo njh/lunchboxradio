@@ -15,16 +15,12 @@ class SourcePackageTask < Rake::TaskLib
 
   # MD5 sum of the source code archive
   attr_accessor :archive_md5
-
-  # Extra arguments for the make command
-  attr_accessor :make_args
   
 
   def initialize(name)
     @name = name
     @archive_url = nil
     @archive_md5 = nil
-    @make_args = []
 
     namespace @name do
       yield self if block_given?
@@ -48,6 +44,10 @@ class SourcePackageTask < Rake::TaskLib
   
   def calc_archive_md5
     Digest::MD5.hexdigest(File.read(archive_path))
+  end
+  
+  def make(*args)
+    sh *(['make', '-C', build_dir] + args)
   end
     
   # Create the tasks defined by this task lib.
@@ -87,10 +87,7 @@ class SourcePackageTask < Rake::TaskLib
     task :config => [:extract]
 
     desc "Build the #{name} package"
-    task :build => [:config] do
-      # FIXME: add on make_args
-      sh 'make', '-C', build_dir
-    end
+    task :build => [:config]
 
     desc "Clean #{name} build directory"
     task :clean do
