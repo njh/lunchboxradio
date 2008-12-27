@@ -10,8 +10,10 @@ if [ ! -d /var/giggi ]; then
   chown -R mongrel:mongrel /var/giggi
 fi
 
-exec setuidgid mongrel mongrel_rails start \
+exec mongrel_rails start \
   --chdir /giggi \
   --port 80 \
   --log /var/giggi/log/production.log \
-  --environment production
+  --environment production \
+  --user mongrel \
+  --group mongrel
