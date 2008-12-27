@@ -7,7 +7,7 @@ mkdir /var/tmp
 
 # Set the hostname
 echo "> Setting up basic networking"
-/bin/hostname semradio
+/bin/hostname giggi
 /sbin/ifconfig lo up
 
 # Needed by DHCP (Raw Packet socket address family)
@@ -20,12 +20,12 @@ modprobe unix
 telnetd
 
 # Create a default resolv.conf
-echo "search aelius.com" > /var/resolv.conf
+echo "search giggi.org" > /var/resolv.conf
 echo "nameserver 80.68.95.25" >> /var/resolv.conf
 
 export FOO='bar'
 
 echo
-echo "> Welcome to The Semantic Radio"
+echo "> Welcome to Giggi OS"
 echo
 

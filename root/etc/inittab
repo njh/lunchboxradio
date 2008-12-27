@@ -1,9 +1,7 @@
 ::sysinit:/etc/rcS
-::wait:/semradio/setup.rb
-::respawn:/semradio/start-dbus.sh
-::respawn:/semradio/start-vlc.sh
-::respawn:/semradio/main.rb
+::wait:/giggi/script/setup.rb
+::respawn:/giggi/script/start-vlc.sh
 ::askfirst:/bin/sh
-::shutdown:/semradio/shutdown.rb
+::shutdown:/giggi/script/shutdown.rb
 ::shutdown:/bin/umount -a -r
 ::restart:/sbin/init

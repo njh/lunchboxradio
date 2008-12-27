@@ -6,12 +6,12 @@
 
 # Was the address of the rsyncd host given on command line?
 if [ $1 ]; then
-	RSYNC_IP="$1"
+	RSYNC_HOST="$1"
 else 
-	RSYNC_IP="10.63.83.16"
+	RSYNC_HOST="rsync.giggi.org"
 fi
 
-echo "rsyncing from: $RSYNC_IP"
+echo "rsyncing from: $RSYNC_HOST"
 
 
 # Re-mount filesystem Read-Write
@@ -26,7 +26,7 @@ rsync \
 	--perms \
 	--times \
 	--exclude=.svn \
-	"rsync://$RSYNC_IP/semradio/" /
+	"rsync://$RSYNC_HOST/giggi/" /
 
 # Save the data to disk
 sync
