@@ -1,0 +1,17 @@
+#!/bin/sh
+
+exec 2>&1
+
+# Create directories
+if [ ! -d /var/giggi ]; then
+  mkdir -p /var/giggi/log
+  mkdir -p /var/giggi/cache
+  mkdir -p /var/giggi/sessions
+  chown -R mongrel:mongrel /var/giggi
+fi
+
+exec setuidgid mongrel mongrel_rails start \
+  --chdir /giggi \
+  --port 80 \
+  --log /var/giggi/log/production.log \
+  --environment production

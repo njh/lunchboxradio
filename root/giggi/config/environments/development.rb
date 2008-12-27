@@ -5,6 +5,10 @@
 # since you don't have to restart the webserver when you make code changes.
 config.cache_classes = false
 
+# Log to STDOUT while developing
+config.logger = Logger.new(STDOUT)
+config.log_level = :debug
+
 # Log error messages when you accidentally call methods on nil.
 config.whiny_nils = true
 

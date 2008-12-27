@@ -9,24 +9,29 @@ cf_mount: '/mnt/cf'
 # Debian packages to install
 # (note that we don't do automatic dependancy checking)
 debian_packages:
- - libc6
- - prelink
- - libasound2
- - libmad0
- - libfaad0
- - libogg0
- - libspeex1
- - libmpcdec3
- - rsync
- - libltdl3
- - libstdc++6
- - libattr1
- - libruby1.8
- - ruby1.8
- - irb1.8
  - ethtool
-
-
+ - irb1.8
+ - libasound2
+ - libattr1
+ - libc6
+ - libfaad0
+ - libltdl3
+ - libmad0
+ - libmpcdec3
+ - libogg0
+ - libruby1.8
+ - libspeex1
+ - libstdc++6
+ - prelink
+ - rsync
+ - ruby1.8
+ - rubygems1.8
+ - zlib1g
+ - mongrel
+ - libgemplugin-ruby1.8
+ - libopenssl-ruby1.8
+ - libssl0.9.8
+ 
 # Files to remove from the build root
 unwanted_files:
  - '^/usr/include'
@@ -34,12 +39,13 @@ unwanted_files:
  - '^/usr/lib/pkgconfig'
  - '^/usr/lib/ruby/1.8/runit'
  - '^/usr/lib/ruby/1.8/soap'
- - '^/usr/lib/ruby/1.8/test'
+ - '^/usr/lib/ruby/1.8/webrick'
  - '^/usr/lib/ruby/1.8/wsdl'
- - '^/usr/lib/ruby/1.8/xsd'
  - '^/usr/lib/ruby/1.8/xmlrpc'
+ - '^/usr/lib/ruby/1.8/xsd'
  - '^/usr/share/doc'
  - '^/usr/share/locale'
  - '^/usr/share/man'
  - '^/usr/share/menu'
+ - '^/usr/share/lintian'
  - '\.la$'
