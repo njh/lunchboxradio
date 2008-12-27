@@ -10,6 +10,8 @@ task :cleanroot do
       if mod == '?'
         if File.file?(file)
           sh 'rm', file
+        elsif File.symlink?(file)
+				  sh 'rm', file
         elsif File.directory?(file)
 				  sh 'rm', '-Rf', file
 				else
