@@ -66,7 +66,7 @@ class SourcePackageTask < Rake::TaskLib
     desc "Extract source tarball files for #{name}"
     task :extract => [:download] do
       # Does the build directory already exist and have something in it?
-      if File.exists?(build_dir) and Dir.entries(build_dir).size >= 2
+      if File.exists?(build_dir) and Dir.entries(build_dir).size > 2
         puts "Directory exists, assuming that archive is already extacted."
       else
         unless File.exists?(build_dir)
@@ -75,7 +75,7 @@ class SourcePackageTask < Rake::TaskLib
         
         if archive_path =~ /\.bz2$/
           sh 'tar', '-jx', '--strip', '1', '-f', archive_path, '-C', build_dir
-        elsif archive_path =~ /\.gz$/
+        elsif archive_path =~ /(\.gz|\.tgz)$/
           sh 'tar', '-zx', '--strip', '1', '-f', archive_path, '-C', build_dir
         else
           raise "Don't know how to extract archive: #{archive_path}"
