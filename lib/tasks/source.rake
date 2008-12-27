@@ -80,6 +80,12 @@ class SourcePackageTask < Rake::TaskLib
         else
           raise "Don't know how to extract archive: #{archive_path}"
         end
+        
+        # Run the patch task, if it exists
+        patch_task = "src:#{name}:patch"
+        if Rake::Task.task_defined?(patch_task)
+          Rake::Task[patch_task].invoke
+        end
       end
     end
 

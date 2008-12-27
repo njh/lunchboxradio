@@ -1,0 +1,305 @@
+diff --git a/configure.ac b/configure.ac
+index a1c5e76..1cfbfbd 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -924,6 +924,21 @@ fi
+ ;;
+ esac
+ 
++dnl
++dnl liblo based Open Sound Control plugin
++dnl
++AC_ARG_ENABLE(osc,
++  [  --enable-osc            Open Sound Control plugin (default disabled)])
++if test "${enable_osc}" = "yes"; then
++  PKG_CHECK_MODULES(LIBLO, liblo >= 0.23,
++    [AC_DEFINE(HAVE_LIBLO, 1, [Define if you have the liblo library])
++     VLC_ADD_PLUGIN([osc])
++     VLC_ADD_LIBS([osc],[$LIBLO_LIBS])
++     VLC_ADD_CFLAGS([osc],[$LIBLO_CFLAGS])],
++    [AC_MSG_WARN(liblo library not found)])
++fi
++
++
+ dnl Build the gtk_main plugins?
+ NEED_GTK_MAIN=no
+ NEED_GNOME_MAIN=no
+diff --git a/modules/control/Modules.am b/modules/control/Modules.am
+index 9813627..dd509a1 100644
+--- a/modules/control/Modules.am
++++ b/modules/control/Modules.am
+@@ -6,6 +6,7 @@ SOURCES_netsync = netsync.c
+ SOURCES_ntservice = ntservice.c
+ SOURCES_hotkeys = hotkeys.c
+ SOURCES_lirc = lirc.c
++SOURCES_osc = osc.c
+ SOURCES_rc = rc.c
+ SOURCES_dbus = dbus.c dbus.h
+ SOURCES_signals = signals.c
+diff --git a/modules/control/osc.c b/modules/control/osc.c
+new file mode 100644
+index 0000000..14f40ec
+--- /dev/null
++++ b/modules/control/osc.c
+@@ -0,0 +1,261 @@
++/*****************************************************************************
++ * osc.c : Open Sound Control module for vlc
++ *****************************************************************************
++ * Copyright (C) 2008 the VideoLAN team
++ * $Id$
++ *
++ * Author: Nicholas Humfrey <njh@aelius.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
++ *****************************************************************************/
++
++/*****************************************************************************
++ * Preamble
++ *****************************************************************************/
++
++#include <fcntl.h>
++
++#ifdef HAVE_CONFIG_H
++# include "config.h"
++#endif
++
++#include <vlc_common.h>
++#include <vlc_plugin.h>
++#include <vlc_interface.h>
++#include <vlc_playlist.h>
++
++#include <lo/lo.h>
++
++
++#define OSC_PORT_TEXT N_("Port Number to listen for OSC messages.")
++#define OSC_PORT_LONGTEXT N_( \
++    "Set the port number that VLC should listen for OSC messages on. " \
++    "By default it chooses a random port number." )
++
++/*****************************************************************************
++ * Local prototypes
++ *****************************************************************************/
++static int  Open    ( vlc_object_t * );
++static void Close   ( vlc_object_t * );
++static void Run     ( intf_thread_t * );
++static void ErrorHandler( int num, const char *msg, const char *where );
++static vlc_object_t *osc_global_this;
++
++/*****************************************************************************
++ * Module descriptor
++ *****************************************************************************/
++vlc_module_begin ()
++    set_shortname( N_("OSC") )
++    set_category( CAT_INTERFACE )
++    set_subcategory( SUBCAT_INTERFACE_CONTROL )
++    set_description( N_("Open Sound Control interface") )
++    set_capability( "interface", 0 )
++    set_callbacks( Open, Close )
++
++    add_string( "osc-port", NULL, NULL,
++                OSC_PORT_TEXT, OSC_PORT_LONGTEXT, false )
++vlc_module_end ()
++
++/*****************************************************************************
++ * intf_sys_t: description and status of interface
++ *****************************************************************************/
++struct intf_sys_t
++{
++    lo_server *p_server;
++};
++
++/*****************************************************************************
++ * ErrorHandler: callback for errors reported by liblo
++ *****************************************************************************/
++static void ErrorHandler( int num, const char *msg, const char *where )
++{
++    msg_Err(osc_global_this, "liblo error %d: '%s' at '%s'", num, msg, where);
++}
++
++static int playlist_Status( playlist_t * p_playlist )
++{
++    int i_status;
++    PL_LOCK;
++    i_status = p_playlist->status.i_status;
++    PL_UNLOCK;
++    return i_status;
++}
++
++
++/*****************************************************************************
++ * DeckHandler: callback for /deck/ * messages
++ *****************************************************************************/
++static int DeckHandler(const char *path, const char *types, lo_arg **argv,
++    int argc, lo_message msg, void *user_data)
++{
++    vlc_object_t *p_this = (vlc_object_t*)user_data;
++    char* psz_from = lo_address_get_url(lo_message_get_source(msg));
++    playlist_t *p_playlist = NULL;
++    int i_ret = 0;
++
++    msg_Info(p_this, "Recieved '%s' from '%s'.", path, psz_from);
++    free(psz_from);
++
++    p_playlist = pl_Yield( (vlc_object_t*) p_this );
++    if ( !strcmp( path, "/deck/play" ) )
++    {
++        if (playlist_Status(p_playlist) == PLAYLIST_STOPPED) {
++            playlist_item_t *p_root = p_playlist->p_root_onelevel;
++            playlist_item_t *first_item = playlist_GetNextLeaf(
++                p_playlist, p_root, NULL, false, false);
++            if (first_item != NULL)
++            {
++                msg_Dbg(p_this, "Playing item id %d", first_item->i_id);
++                playlist_Control( p_playlist, PLAYLIST_VIEWPLAY,
++                                  pl_Unlocked, NULL, first_item );
++            } else {
++                msg_Err(p_this, "Failed to find item on playlist to play.");
++            }
++        } else {
++            msg_Dbg(p_this, "Resuming playback.");
++            playlist_Play( p_playlist );
++        }
++    }
++    else if ( !strcmp( path, "/deck/pause" ) )
++    {
++        playlist_Pause( p_playlist );
++    }
++    else if ( !strcmp( path, "/deck/stop" ) )
++    {
++        playlist_Stop( p_playlist );
++    }
++    else if ( !strcmp( path, "/deck/eject" ) )
++    {
++        playlist_Stop( p_playlist );
++        playlist_Clear( p_playlist, pl_Unlocked );
++    }
++    else if ( !strcmp( path, "/deck/load" ) )
++    {
++        playlist_Stop( p_playlist );
++        /* Add the item to the start of the playlist */
++        playlist_Add( p_playlist, &argv[0]->s, NULL, PLAYLIST_INSERT,
++                0, true, pl_Unlocked );
++    }
++    else
++    {
++        /* We shouldn't get here, should only get paths we added methods for */
++        msg_Err(p_this, "unhandled OSC message by DeckHandler: '%s'", path);
++        i_ret = 1;
++    }
++    pl_Release( (vlc_object_t*) p_this );
++
++    return i_ret;
++}
++
++/*****************************************************************************
++ * WildcardHandler: callback for any unmatched messages
++ *****************************************************************************/
++static int WildcardHandler(const char *path, const char *types, lo_arg **argv,
++    int argc, lo_message msg, void *user_data)
++{
++    vlc_object_t *p_this = (vlc_object_t*)user_data;
++    char* psz_from = lo_address_get_url(lo_message_get_source(msg));
++
++    msg_Info(p_this, "unhandled OSC message: '%s' with args '%s' from '%s'.\n",
++        path, types, psz_from);
++    free(psz_from);
++    return 1;
++}
++
++/*****************************************************************************
++ * Open: initialize interface
++ *****************************************************************************/
++static int Open( vlc_object_t *p_this )
++{
++    intf_thread_t *p_intf = (intf_thread_t *)p_this;
++    intf_sys_t *p_sys;
++    char *psz_port = NULL;
++    char *psz_url = NULL;
++
++    /* Allocate instance and initialize some members */
++    p_intf->p_sys = p_sys = malloc( sizeof( intf_sys_t ) );
++    if( p_sys == NULL )
++        return VLC_ENOMEM;
++
++    p_intf->pf_run = Run;
++
++    psz_port = var_CreateGetString( p_intf, "osc-port" );
++    if (psz_port && *psz_port == '\0')
++    {
++        psz_port = NULL;
++    }
++    msg_Dbg(p_this, "creating new lo_server(port=%s)", psz_port);
++    p_sys->p_server = lo_server_new(psz_port, ErrorHandler);
++    if( p_sys->p_server == NULL )
++    {
++        msg_Err( p_intf, "liblo initialisation failed" );
++        free( p_sys );
++        return VLC_EGENERIC;
++    }
++
++    /* Add callback handers to the server */
++    lo_server_add_method(p_sys->p_server, "/deck/play", NULL,
++        DeckHandler, p_intf);
++    lo_server_add_method(p_sys->p_server, "/deck/pause", NULL,
++        DeckHandler, p_intf);
++    lo_server_add_method(p_sys->p_server, "/deck/stop", NULL,
++        DeckHandler, p_intf);
++    lo_server_add_method(p_sys->p_server, "/deck/eject", NULL,
++        DeckHandler, p_intf);
++    lo_server_add_method(p_sys->p_server, "/deck/load", "s",
++        DeckHandler, p_intf);
++
++    /* add method that will match any path and args */
++    lo_server_add_method(p_sys->p_server, NULL, NULL,
++        WildcardHandler, p_intf);
++
++    /* Display our URL */
++    psz_url = lo_server_get_url( p_sys->p_server );
++    msg_Info( p_intf, "Listening for OSC messages on: %s", psz_url );
++
++    /* FIXME: ugly way of passing object to the liblo ErrorHander */
++    osc_global_this = p_this;
++
++    return VLC_SUCCESS;
++}
++
++/*****************************************************************************
++ * Close: destroy interface
++ *****************************************************************************/
++static void Close( vlc_object_t *p_this )
++{
++    intf_thread_t *p_intf = (intf_thread_t *)p_this;
++    intf_sys_t *p_sys = p_intf->p_sys;
++
++    /* Destroy structure */
++    lo_server_free( p_sys->p_server );
++    free( p_sys );
++}
++
++/*****************************************************************************
++ * Run: main loop
++ *****************************************************************************/
++static void Run( intf_thread_t *p_intf )
++{
++    intf_sys_t *p_sys = p_intf->p_sys;
++    unsigned int i_poll_delay = (INTF_IDLE_SLEEP)/1000;
++
++    while( !intf_ShouldDie( p_intf ) )
++    {
++        /* Hard work is perfomed in the callbacks
++         * (polling timeout is in miliseconds) */
++        lo_server_recv_noblock( p_sys->p_server, i_poll_delay );
++    }
++}

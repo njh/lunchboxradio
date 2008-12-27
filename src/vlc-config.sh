@@ -1,9 +1,12 @@
 #!/bin/sh
 
 cd $1 && \
-exec ./configure \
+./bootstrap &&
+cp ../libtool . &&
+./configure \
   --prefix=/usr/ \
   --enable-shared \
+  --enable-release \
   --disable-a52 \
   --disable-aa \
   --disable-arts \
@@ -33,6 +36,7 @@ exec ./configure \
   --disable-dvdread \
   --disable-esd \
   --disable-fb \
+  --disable-flac \
   --disable-fluidsynth \
   --disable-freetype \
   --disable-fribidi \
@@ -104,7 +108,6 @@ exec ./configure \
   --disable-zvbi \
   --enable-alsa \
   --enable-faad \
-  --enable-flac \
   --enable-id3tag \
   --enable-libxml2 \
   --enable-mad \

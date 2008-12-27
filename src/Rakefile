@@ -17,10 +17,10 @@ namespace :src do
     end
     task :build do
       package.make
-      sh 'cp', "#{package.build_dir}/arch/i386/boot/bzImage", "#{ROOT_DIR}/root/boot/vmlinux"
-      sh 'cp', "#{package.build_dir}/System.map", "#{ROOT_DIR}/root/boot/System.map"
-      sh 'cp', "#{package.build_dir}/.config", "#{ROOT_DIR}/root/boot/config"
-      package.make "INSTALL_MOD_PATH=#{ROOT_DIR}/root", 'modules_install'
+      sh 'cp', "#{package.build_dir}/arch/i386/boot/bzImage", "#{BUILD_ROOT}/boot/vmlinux"
+      sh 'cp', "#{package.build_dir}/System.map", "#{BUILD_ROOT}/boot/System.map"
+      sh 'cp', "#{package.build_dir}/.config", "#{BUILD_ROOT}/boot/config"
+      package.make "INSTALL_MOD_PATH=#{BUILD_ROOT}", 'modules_install'
     end
   end
 
@@ -36,13 +36,30 @@ namespace :src do
     end
     task :build do
       package.make
-      package.make "CONFIG_PREFIX=#{ROOT_DIR}/root", 'install'
+      package.make "CONFIG_PREFIX=#{BUILD_ROOT}", 'install'
+    end
+  end
+
+  SourcePackageTask.new(:liblo) do |package|
+    package.archive_url = 'http://downloads.sourceforge.net/liblo/liblo-0.25.tar.gz'
+    package.archive_md5 = 'e8b8f6542cdecd6ad5f42dd4d4d81023'
+    task :config do
+      unless File.exists?("#{package.build_dir}/Makefile")
+        sh "cd #{package.build_dir} && ./configure --prefix=/usr"
+      end
+    end
+    task :build do
+      package.make
+      package.make "DESTDIR=#{BUILD_ROOT}", 'install'
     end
   end
 
   SourcePackageTask.new(:vlc) do |package|
     package.archive_url = 'http://download.videolan.org/pub/videolan/vlc/0.9.8a/vlc-0.9.8a.tar.bz2'
     package.archive_md5 = '8ffa2ff763badd5de7592004d8d69a63'
+    task :patch do
+      sh "cd #{package.build_dir} && patch -p1 < ../vlc-0.9.8a+osc.patch"
+    end
     task :config do
       unless File.exists?("#{package.build_dir}/Makefile")
         sh "#{ROOT_DIR}/src/vlc-config.sh", package.build_dir
@@ -50,7 +67,7 @@ namespace :src do
     end
     task :build do
       package.make
-      package.make "DESTDIR=#{ROOT_DIR}/root", 'install'
+      package.make "DESTDIR=#{BUILD_ROOT}", 'install'
     end
   end
 
