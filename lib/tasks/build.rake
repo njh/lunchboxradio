@@ -21,5 +21,39 @@ task :remove_unwanted do
   end
 end
 
+desc "Copy binaries from Debian packages to build root"
+task :copy_binaries do
+  puts "* Copying files from installed Debian packages"
+  SETTINGS['debian_packages'].each do |pkg|
+		puts "* Installing #{pkg}..."
+		
+		IO.popen("dpkg -L #{pkg}" ) do |dpkg|
+		  dpkg.each_line do |src_file|
+		    src_file.chomp!
+		    
+		    # Ignore files in /etc
+		    next if src_file =~ %r{^/etc}
+		    
+		    # Ignore files in the unwanted list
+		    unwanted = false
+        SETTINGS['unwanted_files'].each do |regexp|
+          unwanted = true if src_file =~ Regexp.new(regexp)
+		    end
+		    next if unwanted
+		    
+		    # Copy file or create directory
+		    target_file = File.join(BUILD_ROOT,src_file)
+		    if File.directory?(src_file)
+		      Dir.mkdir(target_file) unless File.exists?(target_file)
+		    else
+		      if !File.exists?(target_file) or File.mtime(src_file) > File.mtime(target_file)
+		        sh 'cp', '-dp', src_file, target_file
+		      end
+		    end
+		  end
+		end
+  end
+end
+
 desc "Build and Copy files into 'root' directory"
-task :build => ['src:build', :remove_unwanted]
+task :build => ['src:build', :copy_binaries, :remove_unwanted]
