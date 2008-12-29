@@ -3,4 +3,4 @@
 exec 2>&1
 
 echo "Starting telnetd"
-exec /sbin/telnetd -F
+exec /sbin/telnetd -F -l /bin/sh
