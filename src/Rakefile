@@ -8,6 +8,9 @@ namespace :src do
   SourcePackageTask.new(:linux) do |package|
     package.archive_url = 'http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.28.tar.bz2'
     package.archive_md5 = 'd351e44709c9810b85e29b877f50968a'
+    task :patch => ['src:madwifi:extract'] do
+      sh "cd #{ROOT_DIR}/src/madwifi/patch-kernel && ./install.sh #{package.build_dir}"
+    end
     task :config do
       config_file = "#{package.build_dir}/.config"
       unless File.exists?(config_file)
@@ -22,6 +25,11 @@ namespace :src do
       sh 'cp', "#{package.build_dir}/.config", "#{BUILD_ROOT}/boot/config"
       package.make "INSTALL_MOD_PATH=#{BUILD_ROOT}", 'modules_install'
     end
+  end
+
+  SourcePackageTask.new(:madwifi) do |package|
+    package.archive_url = 'http://ftp.uk.debian.org/debian/pool/non-free/m/madwifi/madwifi_0.9.4+r3772.20080716.orig.tar.gz'
+    package.archive_md5 = '34cad66791b44ac29d225320c1ea0bb8'
   end
 
   SourcePackageTask.new(:busybox) do |package|
@@ -70,6 +78,8 @@ namespace :src do
       package.make "DESTDIR=#{BUILD_ROOT}", 'install'
     end
   end
+  
+  
 
   desc "Clean all source build directories"
   task :clean
