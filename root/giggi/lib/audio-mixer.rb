@@ -7,23 +7,26 @@ class AudioMixer
 
   def initialize(iface="'PCM',0")
     @iface = iface
+    
+    # Set some sane defaults
+    @volume = 0
+    @min_volume = 0
+    @max_volume = 31
 
-#     # Get the current volume
-#     IO.popen("amixer sget #{@iface}") { |f|
-#       while line = f.gets do
-#         puts "Line: #{line}"
-#         if (line =~ /Limits: Playback (\d+) - (\d+)/)
-#           @min_volume = $1.to_i
-#           @max_volume = $2.to_i
-#         elsif (line =~ /Front Left: Playback (\d+)/)
-#           @volume = $1.to_i
-#           puts "Found volume: #{@volume}"
-#         end
-#        end
-#     }
-#    
-#    # Got volume ok?
-#    #raise "Failed to get current audio mixer volume" if @volume.nil?
+    # Get the current volume
+    IO.popen("amixer sget #{@iface}") { |f|
+      while line = f.gets do
+        if (line =~ /Limits: Playback (\d+) - (\d+)/)
+          @min_volume = $1.to_i
+          @max_volume = $2.to_i
+        elsif (line =~ /Front Left: Playback (\d+)/)
+          @volume = $1.to_i
+        end
+       end
+    }
+   
+    # Got volume ok?
+    #raise "Failed to get current audio mixer volume" if @volume.nil?
     
     # Getting the volume from the USB device appears to be broken, 
     # set it to a default value instead
