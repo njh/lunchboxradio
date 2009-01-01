@@ -35,12 +35,16 @@ task :install => [:mount] do
     sh 'rsync',
        '--verbose',         # Verbose, display the changed files
        '--recursive',       # Syncronise files and folders
+       '--delete',          # Delete files/folders that no-longer exist
        '--links',           # Copy symbolic links
        '--hard-links',      # Preserve hard links
        '--perms',           # Preserve file permissions
        '--times',           # Preserve modification times
        '--exclude=.svn',    # Exclude Subversion repository files
-       "#{ROOT_DIR}/root/", # Source directory
+       '--exclude=/boot/',       # Exclude /boot
+       '--exclude=/dev/',        # Exclude /dev
+       '--exclude=/lost+found/', # Exclude /lost+found
+       "#{BUILD_ROOT}/",    # Source directory
        SETTINGS['cf_mount'] # Target directory
   
   ensure
