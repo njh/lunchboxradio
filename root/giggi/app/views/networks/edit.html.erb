@@ -1,0 +1,37 @@
+
+<% form_for @network do |f| %>
+  <%= f.error_messages %>
+  
+  <%= f.label :name, 'Name' %>:
+  <%= f.text_field :name %><br />
+  
+  <%= f.label :wireless_security, 'Wireless Security' %>:
+  <%= f.radio_button :wireless_security, 'none' %><%= f.label :wireless_security_none, 'None' %>
+  <%= f.radio_button :wireless_security, 'wep' %><%= f.label :wireless_security_wep, 'WEP' %><br />
+
+  <%= f.label :wireless_key, 'Wireless Secret' %>:
+  <%= f.password_field :wireless_key %><br />
+
+  <div>IP Settings</div>
+  <%= f.label :ip_method, 'IP Method' %>:
+  <%= f.radio_button :ip_method, 'dhcp' %><%= f.label :ip_method_dhcp, 'DHCP' %>
+  <%= f.radio_button :ip_method, 'manual' %><%= f.label :ip_method_manual, 'Manual' %><br />
+
+  <%= f.label :ip_address, 'IP Address' %>:
+  <%= f.text_field :ip_address %><br />
+
+  <%= f.label :ip_netmask, 'IP Netmask' %>:
+  <%= f.text_field :ip_netmask %><br />
+
+  <%= f.label :ip_gateway, 'IP Gateway' %>:
+  <%= f.text_field :ip_gateway %><br />
+
+  <%= f.label :ip_domain, 'Domain Name' %>:
+  <%= f.text_field :ip_domain %><br />
+
+  <%= f.label :ip_dnsservers, 'DNS Servers' %>:
+  <%= f.text_field :ip_dnsservers %><br />
+
+  <%= f.submit %>
+  
+<% end %>

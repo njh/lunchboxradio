@@ -12,4 +12,21 @@ class ApplicationController < ActionController::Base
   # Uncomment this to filter the contents of submitted sensitive data parameters
   # from your application log (in this case, all fields with names like "password"). 
   # filter_parameter_logging :password
+  
+  def render_dialog(dialog)
+    # Convert to dialog if it isn't one already
+    unless dialog.is_a? Dialog
+      dialog = Dialog.new(dialog)
+    end
+    
+    respond_to do |format|
+      format.dlg {
+        render :text => dialog.to_yaml
+      }
+      format.html {
+        @page_title = dialog['title']
+        render :text => dialog.to_html, :layout => "application"
+      }
+    end
+  end
 end

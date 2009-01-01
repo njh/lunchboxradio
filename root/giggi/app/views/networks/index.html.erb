@@ -1,0 +1,11 @@
+<% @page_title = "Network Settings" %>
+
+<ul>
+<% for network in @networks -%>
+  <li><%= link_to(network.name, edit_network_url(network)) %></li>
+<% end -%>
+</ul>
+
+<div>
+  <%= link_to('New Network', new_network_url) %>
+</div>

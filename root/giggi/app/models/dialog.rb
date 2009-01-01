@@ -8,14 +8,18 @@ class Dialog
   def to_html
     # FIXME: re-factor this to use templates
     html = StringIO.new
-    html.puts "<h1>#{@data['title']}</h1>" unless @data['title'].nil?
     html.puts "<p>#{@data['caption']}</h1>" unless @data['caption'].nil?
     
     case @data['type']
       when 'menu'
         html.puts "<ul>"
         @data['items'].each do |item|
-          html.puts "<li><a href='#{item['href']}'>#{item['title']}</a></li>"
+          next if item['href'] =~ /^ruby:/
+          html.print "<li>"
+          html.print "<a href='#{item['href']}'>" unless item['href'].nil?
+          html.print item['title']
+          html.print "</a>" unless item['href'].nil?
+          html.puts "</li>"
         end
         html.puts "</ul>"
       when 'msgbox'
@@ -24,6 +28,10 @@ class Dialog
         html.puts "<p>Unsupported dialog type: #{@data['type']}</p>"
     end
     html.string
+  end
+  
+  def [] (key)
+    @data[key]
   end
   
   def to_yaml
