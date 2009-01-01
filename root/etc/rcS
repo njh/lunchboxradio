@@ -2,8 +2,26 @@
 
 # Mount /proc and /var
 echo "> Mounting filesystems"
-/bin/mount -a
-mkdir /var/tmp
+mount -a
+chmod 0755 /var
+
+# Create tmp dir on ramdisk
+if [ ! -d /var/tmp ]; then
+  echo "> Creating /var/tmp"
+  mkdir /var/tmp
+  chmod a+rwx /var/tmp
+fi
+
+# Create directories for webapp on ramdisk
+if [ ! -d /var/giggi ]; then
+  echo "> Creating /var/giggi"
+  mkdir -p /var/giggi/db
+  touch /var/giggi/db/production.sqlite3
+  mkdir -p /var/giggi/log
+  mkdir -p /var/giggi/cache
+  mkdir -p /var/giggi/sessions
+  chown -R webapp:giggi /var/giggi
+fi
 
 # Copy services directory to ramdisk
 echo "> Copying services directory to /var/services"
@@ -11,8 +29,8 @@ cp -af /usr/service /var/service
 
 # Set the hostname
 echo "> Setting up basic networking"
-/bin/hostname giggi
-/sbin/ifconfig lo up
+hostname giggi
+ifconfig lo up
 
 # Needed by DHCP (Raw Packet socket address family)
 modprobe af_packet
