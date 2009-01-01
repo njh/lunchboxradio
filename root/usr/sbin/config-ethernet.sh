@@ -1,6 +1,6 @@
 #!/bin/sh 
 # 
-# Shell script to setup Ethernet 
+# Shell script to setup DHCP on Ethernet 
 # 
 
 # Load kernel module 
@@ -10,8 +10,5 @@ ifconfig eth0 up
 # Now start DHCP 
 udhcpc -i eth0 -c giggi -s /etc/udhcp.script -p /var/udhcpc.pid 
 
-# Start a telnet server 
-telnetd 
-
 # And set the system clock 
-rdate time.aelius.com 
+rdate time.giggi.org
