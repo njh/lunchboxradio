@@ -1,8 +1,10 @@
+<% @page_title = "Network Settings: " %>
+<% @page_title += (@network.name.blank? ? 'New' : @network.name) %>
 
 <% form_for @network do |f| %>
   <%= f.error_messages %>
   
-  <%= f.label :name, 'Name' %>:
+  <%= f.label :name, 'Wireless Network Name' %>:
   <%= f.text_field :name %><br />
   
   <%= f.label :wireless_security, 'Wireless Security' %>:
