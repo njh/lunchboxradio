@@ -24,8 +24,11 @@ class ApplicationController < ActionController::Base
         render :text => dialog.to_yaml
       }
       format.html {
+        @dialog = dialog
         @page_title = dialog['title']
-        render :text => dialog.to_html, :layout => "application"
+        # FIXME: check for overriding HTML template
+        render :template => dialog.html_template,
+               :locals => {:dialog => dialog}
       }
     end
   end

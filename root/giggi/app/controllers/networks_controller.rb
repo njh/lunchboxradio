@@ -6,7 +6,6 @@ class NetworksController < ApplicationController
 
   def edit
     @network = Network.find(params[:id])
-    @page_title = "Network Settings: #{@network.name}"
   end
 
   def update

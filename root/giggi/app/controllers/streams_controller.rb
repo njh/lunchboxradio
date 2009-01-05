@@ -1,28 +1,30 @@
 class StreamsController < ApplicationController
 
   def index
-    latest_stream = RadioStream.last(:order => 'created_at')
-    #if latest_stream.nil? or latest_stream.created_at < 
+    latest_stream = RadioStream.first(:order => 'updated_at DESC')
+    if latest_stream.nil? or latest_stream.updated_at < DateTime.now.beginning_of_day
       # Tell user that we need to fetch a list of streams
-      # then redirect them to 'fetch' action
-    #
-    
-    # Display the list of streams
-    streams = RadioStream.all
-    dialog = Dialog.new(
-      'type' => 'menu',
-      'title' => 'Live Radio Streams',
-      'items' => streams.map {|s| {'title' => s.title} }
-    )
-    respond_to do |format|
-      format.dlg { render :text => dialog.to_yaml }
-      format.html { render :text => dialog.to_html }
+      render_dialog(
+        'type' => 'infobox',
+        'title' => 'Updating Live Radio Streams',
+        'text' => "Please wait while the list of live streams is updated...",
+        'redirect' => fetch_streams_url
+      )
+    else
+      # Display the list of streams
+      streams = RadioStream.all
+      render_dialog(
+        'type' => 'menu',
+        'title' => 'Live Radio Streams',
+        'items' => streams.map {|s| {'title' => s.title} }
+      )
     end
   end
   
   def fetch
+    # FIXME: catch exceptions and inform user
     RadioStream.fetch
-    redirect('/streams')
+    redirect_to streams_url
   end
   
   def select

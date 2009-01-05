@@ -1,0 +1,8 @@
+<ul>
+<% dialog['items'].each do |item| %>
+<% next if item['href'] =~ /^ruby:/ %>
+  <li>
+    <%= link_to(item['title'], item['href']) %>
+  </li>
+<% end %>
+</ul>

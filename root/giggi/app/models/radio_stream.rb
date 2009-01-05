@@ -1,7 +1,7 @@
 require 'net/http'
 require 'rexml/document'
 
-XSPF_URL='http://radio.aelius.com/streams.xspf'
+XSPF_URL='http://www.giggi.org/streams.xspf'
 
 class RadioStream < ActiveRecord::Base
 
@@ -13,19 +13,18 @@ class RadioStream < ActiveRecord::Base
     # Parse the server response
     doc = REXML::Document.new(res.body)
 
-    # Delete all the old streams
-    RadioStream.delete_all
-
     # Add the new radio streams
     doc.elements.each("/playlist/trackList/track") do |track|
-      stream = RadioStream.create(
-        :location => track.text('location'),
+      stream = RadioStream.find_or_initialize_by_location( track.text('location') )
+      stream.update_attributes(
         :title => track.text('title'),
         :creator => track.text('creator'),
-        :annotation => track.text('annotation'),
-        :created_at => DateTime.now
+        :annotation => track.text('annotation')
       )
     end
+    
+    # Delete all streams that haven't been updated recently
+    # FIXME: implement this
     
   end
   

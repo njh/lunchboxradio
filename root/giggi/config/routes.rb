@@ -10,7 +10,7 @@ ActionController::Routing::Routes.draw do |map|
   map.formatted_settings 'settings.:format', :controller => 'pages', :action => 'settings', :defaults => {:format => 'html'}
   
   map.resources :networks, :as => 'settings/networks'
-  map.resources :streams
+  map.resources :streams, :collection => { :fetch => :get }
 
   # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
   map.root :controller => "root"
