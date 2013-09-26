@@ -1,7 +1,7 @@
 require 'net/http'
 require 'rexml/document'
 
-XSPF_URL='http://www.giggi.org/streams.xspf'
+XSPF_URL='http://radio.aelius.com/streams.xspf'
 
 class RadioStream < ActiveRecord::Base
 

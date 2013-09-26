@@ -48,7 +48,7 @@ Rails::Initializer.run do |config|
   # Make sure the secret is at least 30 characters and all random, 
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
-    :session_key => '_giggi_session',
+    :session_key => '_lunchbox_session',
     :secret      => '725a68d8e34522c88256a9a5dfda89817d1a904a40cc8457e621a010af519d4b7f9768866eeb56fe2d888ec264853b6e21e86d02ed5f6b02af1efaf10520cbd4'
   }
 

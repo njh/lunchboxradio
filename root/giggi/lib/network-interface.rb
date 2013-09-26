@@ -58,7 +58,7 @@ class NetworkInterface
     cmd = [ 'udhcpc',
       '-n',
       '-i', @name,
-      '-c', 'giggi',
+      '-c', 'lunchbox',
       '-s', DHCPC_SCRIPT,
       '-p', DHCPC_PID,
       '-t', '5'

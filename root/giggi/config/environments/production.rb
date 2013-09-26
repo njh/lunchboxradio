@@ -5,7 +5,7 @@
 config.cache_classes = true
 
 # Log to directory on tmpfs
-config.logger = Logger.new('/var/giggi/log/production.log', 1, 1024000)
+config.logger = Logger.new('/var/lunchbox/log/production.log', 1, 1024000)
 config.log_level = :info
 
 # Full error reports are disabled and caching is turned on
@@ -14,4 +14,4 @@ config.action_controller.perform_caching             = true
 config.action_view.cache_template_loading            = true
 
 # Cache to directory on tmpfs
-config.cache_store = :file_store, '/var/giggi/cache'
+config.cache_store = :file_store, '/var/lunchbox/cache'

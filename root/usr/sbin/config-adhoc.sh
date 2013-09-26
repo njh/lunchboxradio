@@ -6,7 +6,7 @@
 modprobe ath_pci countrycode=826 autocreate=none
 wlanconfig ath0 destroy
 wlanconfig ath0 create wlandev wifi0 wlanmode adhoc
-iwconfig ath0 essid giggi
+iwconfig ath0 essid lunchbox
 iwconfig ath0 channel auto
 ifconfig ath0 up
 

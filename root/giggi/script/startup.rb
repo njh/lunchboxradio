@@ -10,8 +10,8 @@ require 'yaml'
 require 'glk'
 
 SERIAL_PORT='/dev/ttyUSB0'
-NETWORKS_DIR='/giggi/networks'
-TIME_SERVER='time.giggi.org'
+NETWORKS_DIR='/lunchbox/networks'
+TIME_SERVER='time.aelius.com'
 
 LCD_MODULES = [
   ['ohci-hcd'],
@@ -71,7 +71,7 @@ begin
   # Setup audio
   load_modules( AUDIO_MODULES )
   mixer = AudioMixer.new
-  system('aplay', '/giggi/lib/bbcb_beep.wav')
+  system('aplay', '/lunchbox/lib/bbcb_beep.wav')
   
   
   # Try wired first

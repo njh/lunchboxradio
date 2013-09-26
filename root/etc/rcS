@@ -13,14 +13,14 @@ if [ ! -d /var/tmp ]; then
 fi
 
 # Create directories for webapp on ramdisk
-if [ ! -d /var/giggi ]; then
-  echo "> Creating /var/giggi"
-  mkdir -p /var/giggi/db
-  touch /var/giggi/db/production.sqlite3
-  mkdir -p /var/giggi/log
-  mkdir -p /var/giggi/cache
-  mkdir -p /var/giggi/sessions
-  chown -R webapp:giggi /var/giggi
+if [ ! -d /var/lunchbox ]; then
+  echo "> Creating /var/lunchbox"
+  mkdir -p /var/lunchbox/db
+  touch /var/lunchbox/db/production.sqlite3
+  mkdir -p /var/lunchbox/log
+  mkdir -p /var/lunchbox/cache
+  mkdir -p /var/lunchbox/sessions
+  chown -R webapp:lunchbox /var/lunchbox
 fi
 
 # Copy services directory to ramdisk
@@ -29,7 +29,7 @@ cp -af /usr/service /var/service
 
 # Set the hostname
 echo "> Setting up basic networking"
-hostname giggi
+hostname lunchbox
 ifconfig lo up
 
 # Needed by DHCP (Raw Packet socket address family)
@@ -39,9 +39,9 @@ modprobe af_packet
 modprobe unix
 
 # Create a default resolv.conf
-echo "search giggi.org" > /var/resolv.conf
-echo "nameserver 80.68.95.25" >> /var/resolv.conf
+echo "search aelius.com" > /var/resolv.conf
+echo "nameserver 8.8.8.8" >> /var/resolv.conf
 
 echo
-echo "> Welcome to Giggi Radio OS"
+echo "> Welcome to Lunch Box Radio OS"
 echo

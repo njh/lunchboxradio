@@ -15,5 +15,5 @@ test:
 
 production:
   adapter: sqlite3
-  database: /var/giggi/db/production.sqlite3
+  database: /var/lunchbox/db/production.sqlite3
   timeout: 5000

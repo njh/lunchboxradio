@@ -1,7 +1,7 @@
 ::sysinit:/etc/rcS
-::wait:/giggi/script/startup.rb
+::wait:/lunchbox/script/startup.rb
 ::respawn:/bin/runsvdir /var/service
 ::askfirst:/bin/sh
-::shutdown:/giggi/script/shutdown.rb
+::shutdown:/lunchbox/script/shutdown.rb
 ::shutdown:/bin/umount -a -r
 ::restart:/sbin/init

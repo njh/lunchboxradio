@@ -3,9 +3,9 @@
 exec 2>&1
 
 exec mongrel_rails start \
-  --chdir /giggi \
+  --chdir /lunchbox \
   --port 80 \
-  --log /var/giggi/log/production.log \
+  --log /var/lunchbox/log/production.log \
   --environment production \
   --user webapp \
-  --group giggi
+  --group lunchbox
