@@ -34,3 +34,11 @@ Software Components used:
  * [VideoLAN Client](http://www.videolan.org/vlc/)
  * [Ruby](http://www.ruby-lang.org/)
  * [Rails](http://rubyonrails.org/)
+
+
+Photo
+-----
+
+![Photo](https://farm3.staticflickr.com/2900/13965046511_089af2a2f6.jpg)
+
+More photos here: https://www.flickr.com/photos/njh/sets/72157605819478467/
